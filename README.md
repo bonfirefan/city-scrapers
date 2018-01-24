@@ -1,13 +1,13 @@
-# Documenters Aggregator
+# Intro
 
-The Documenters Aggregator a collection of scrapers and utilities to collect and store a comprehensive, central, and accessible calendar for public government meetings in Chicago and Cook County.
+The Documenters Aggregator project collects and stores a comprehensive, central, and accessible calendar for public government meetings in Chicago and Cook County through a compilation of scrapers and utilities. 
 
 [![Build Status](https://travis-ci.org/City-Bureau/documenters-aggregator.svg?branch=master)](https://travis-ci.org/City-Bureau/documenters-aggregator)
 
 [![Deploy Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZUwxa3FleE42andOVVZhUytOSXFQOE5QMnYwN3Jxa2FmWTBoMk5XZmJTb05OSmtIcXc4SW5ycjZua2x0Zy9SQzN2Q3ZTVW1xRWFrTGRUSVhna2Y3NWtnPSIsIml2UGFyYW1ldGVyU3BlYyI6IklRdldCcXJKMm4zTmFtZXEiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://console.aws.amazon.com/codebuild/home?region=us-east-1#/projects/DocumentersAggregator/view)
 
 
-## Use Case
+## Purpose
 
 Public meetings are important spaces for democracy where any resident can participate and hold public figures accountable. [City Bureau's Documenters program](https://www.citybureau.org/documenters) pays community members an hourly wage to inform and engage their communities by attending and documenting public meetings.
 
@@ -15,7 +15,7 @@ How does the Documenters program know when meetings are happening? It isn’t ea
 
 That’s why City Bureau and ProPublica Illinois worked together with a team of civic coders to develop and coordinate a community open source project to scrape and store these meetings in a central Documenters calendar.
 
-## Coding Community
+## Our Coding Community
 
 Documenters Aggregator is a community-based open source project with a friendly community that welcomes contributions from everyone.
 
