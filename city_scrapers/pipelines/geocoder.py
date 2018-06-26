@@ -9,9 +9,8 @@ import os
 from airtable import Airtable
 from random import randint
 
-AIRTABLE_BASE_KEY = os.environ.get('DOCUMENTERS_AGGREGATOR_AIRTABLE_BASE_KEY')
-AIRTABLE_GEOCODE_TABLE = os.environ.get('DOCUMENTERS_AGGREGATOR_AIRTABLE_GEOCODE_TABLE')
-TAMU_API_KEY = os.environ.get('CITY_SCRAPERS_TAMU_API_KEY')
+AIRTABLE_BASE_KEY = os.environ.get('CITY_SCRAPERS_AIRTABLE_BASE_KEY')
+AIRTABLE_GEOCODE_TABLE = os.environ.get('CITY_SCRAPERS_AIRTABLE_GEOCODE_TABLE')
 
 
 class GeocoderPipeline(object):
