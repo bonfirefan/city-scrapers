@@ -13,7 +13,8 @@ from city_scrapers.spider import Spider
 
 class Chi_librarySpider(Spider):
     name = 'chi_library'
-    long_name = 'Chicago Public Library'
+    agency_id = 'Chicago Public Library'
+    timezone = 'America/Chicago'
     allowed_domains = ['https://www.chipublib.org/']
     start_urls = ['https://www.chipublib.org/board-of-directors/board-meeting-schedule/']
 
@@ -28,7 +29,6 @@ class Chi_librarySpider(Spider):
         """
         `parse` should always `yield` a dict that follows the `Open Civic Data
         event standard <http://docs.opencivicdata.org/en/latest/data/event.html>`_.
-
         Change the `_parse_id`, `_parse_name`, etc methods to fit your scraping
         needs.
         """
@@ -63,15 +63,34 @@ class Chi_librarySpider(Spider):
             data = {
                 '_type': 'event',
                 'name': 'Chicago Public Library Board Meeting',
-                'description': description_str,
-                'classification': 'Board meeting',
-                'start_time': start_time,
-                'end_time': None,  # no end time listed
+                'event_description': description_str,
                 'all_day': False,  # default is false
-                'timezone': 'America/Chicago',
                 'status': self._parse_status(item),  # default is tentative, but there is no status info on site
+                'classification': 'Board meeting',
+                'start': {
+                    'date': start_time.date(),
+                    'time': start_time.time(),
+                    'note': ''
+                },
+                'end': {
+                    'date': None,
+                    'time': None,
+                    'note': None,
+                },
                 'location': self._parse_location(item, lib_info),
-                'sources': self._parse_sources(response)
+                'documents': [
+                    {
+                        'url': self._parse_agenda(start_time),
+                        # create function
+                        'note': 'agenda'
+                    }
+                ],
+                'sources': [
+                    {
+                        'url': self._parse_sources(response),
+                        'note': '',
+                    }
+                ]
             }
             data['id'] = self._generate_id(data)
             yield data
@@ -93,12 +112,10 @@ class Chi_librarySpider(Spider):
     def _parse_status(self, item):
         """
         Parse or generate status of meeting. Can be one of:
-
         * cancelled
         * tentative
         * confirmed
         * passed
-
         @TODO determine correct status
         """
         return 'tentative'
@@ -115,13 +132,9 @@ class Chi_librarySpider(Spider):
         optional and may be more trouble than they're worth to collect.
         """
         return {
-            'url': None,
+            'address': self._parse_address(item, lib_info),
             'name': self.find_name(item),
-            'coordinates': {
-                'latitude': None,
-                'longitude': None,
-            },
-            'address': self._parse_address(item, lib_info)
+            'neighborhood': '',
         }
 
     def _parse_address(self, item, lib_info):
@@ -156,3 +169,22 @@ class Chi_librarySpider(Spider):
         Parse sources.
         """
         return [{'url': response.url, 'note': ''}]
+
+    def _parse_agenda(start):
+        """
+        Parse agenda url.
+        """
+        b = 'https://www.chipublib.org/news/board-of-directors-meeting-agenda'
+        b_gen = 'https://www.chipublib.org/news/board-of-directors-'
+        url = b + start.strftime('%B') + '-' + start.strftime('%d') + '-' + start.strftime('%Y')
+        
+        if requests.get(url).status == 404:
+            url = b_gen + start.strftime('%B') + 'meeting-agenda'
+#                for i in range(2:datetime.datetime.today().year-2015)
+        return agenda_url
+    
+    def _agenda_next(url, year, i):
+        url = url + '-' + i
+        if len(re.findall(year, requests.get(url).text)) < 2:
+            url = url + '-' + str(i+1)
+return()
