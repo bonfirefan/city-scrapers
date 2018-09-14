@@ -8,12 +8,14 @@ import requests
 import json
 import datetime
 
+from city_scrapers.constants import BOARD, TENTATIVE
 from city_scrapers.spider import Spider
 
 
-class Chi_librarySpider(Spider):
+class ChiLibrarySpider(Spider):
     name = 'chi_library'
-    long_name = 'Chicago Public Library'
+    agency_name = 'Chicago Public Library Board of Directors'
+    timezone = 'America/Chicago'
     allowed_domains = ['https://www.chipublib.org/']
     start_urls = ['https://www.chipublib.org/board-of-directors/board-meeting-schedule/']
     r = requests.get("https://data.cityofchicago.org/resource/psqp-6rmg.json")
@@ -58,16 +60,23 @@ class Chi_librarySpider(Spider):
                 '_type': 'event',
                 'name': 'Chicago Public Library Board Meeting',
                 'description': description_str,
-                'classification': 'Board meeting',
-                'start_time': start_time,
-                'end_time': None,  # no end time listed
-                'all_day': False,  # default is false
-                'timezone': 'America/Chicago',
-                'status': self._parse_status(item),  # default is tentative, but there is no status info on site
-                'location': self._parse_location(item, self.LIB_INFO),
+                'classification': BOARD,
+                'start': {
+                    'date': start_time.date(),
+                    'time': start_time.time(),
+                    'note': '',
+                },
+                'end': {
+                    'date': None,
+                    'time': None,
+                    'note': '',
+                },
+                'all_day': False,
+                'location': self._parse_location(item, lib_info),
                 'sources': self._parse_sources(response)
             }
             data['id'] = self._generate_id(data)
+            data['status'] = self._generate_status(data, '')
             yield data
 
     def _parse_classification(self, item):
@@ -75,19 +84,6 @@ class Chi_librarySpider(Spider):
         Parse or generate classification (e.g. town hall).
         """
         return 'Not classified'
-
-    def _parse_status(self, item):
-        """
-        Parse or generate status of meeting. Can be one of:
-
-        * cancelled
-        * tentative
-        * confirmed
-        * passed
-
-        @TODO determine correct status
-        """
-        return 'tentative'
 
     def find_name(self, li):
         if len(li) == 4:
@@ -134,8 +130,7 @@ class Chi_librarySpider(Spider):
         date = date.replace(',', '')
         date = date.replace('.', '')
         date = date + ' ' + year
-        datetime_object = datetime.datetime.strptime(date, '%A %B %d %I %p %Y')
-        return self._naive_datetime_to_tz(datetime_object)
+        return datetime.datetime.strptime(date, '%A %B %d %I %p %Y')
 
     def _parse_sources(self, response):
         """
