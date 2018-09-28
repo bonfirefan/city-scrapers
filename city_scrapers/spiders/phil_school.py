@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from city_scrapers.spider import Spider
 
 
@@ -8,7 +9,7 @@ class PhilSchoolSpider(Spider):
     agency_name = 'Philadelphia Board of Education'
     timezone = 'US/Eastern'
     allowed_domains = ['www.philasd.org']
-    start_urls = ['https://www.philasd.org/schoolboard/action-meetings/upcoming-meeting/']
+    start_urls = ['https://www.philasd.org/schoolboard/action-meetings/meeting-schedule/']
 
     def parse(self, response):
         """
@@ -18,8 +19,8 @@ class PhilSchoolSpider(Spider):
         Change the `_parse_id`, `_parse_name`, etc methods to fit your scraping
         needs.
         """
-        date_response = response.css('.background > div:nth-child(1) > p:nth-child(2)'))
-        for item in response.css('#post-89 > div:nth-child(1)'):
+        date_response = response.xpath('/html/body/div[5]/div[2]/div/div[1]/div/div/div/div/div/div/div/table/tbody/tr/td')
+        for item in response.xpath('/html/body/div[5]/div[2]/div/div[1]/div/div/div/div/div/div/div/table/tbody/tr'):
 
             data = {
                 '_type': 'event',
@@ -70,11 +71,11 @@ class PhilSchoolSpider(Spider):
         """
         return ''
 
-    def _parse_start(self, date_response):
+    def _parse_start(self, item):
         """
         Parse start date and time.
         """
-        date = re.search('(?<=Date:).*?(?=<br>)', date_response)
+        date = re.search('((?<=<td>).*?(?=</td\'>)', item)
         return date
 
     def _parse_end(self, item):
