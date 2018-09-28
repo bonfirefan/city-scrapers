@@ -8,19 +8,25 @@ import requests
 import json
 import datetime
 
-from city_scrapers.constants import BOARD, TENTATIVE
+from city_scrapers.constants import BOARD
 from city_scrapers.spider import Spider
 
 
 class ChiLibrarySpider(Spider):
     name = 'chi_library'
-    agency_name = 'Chicago Public Library Board of Directors'
+    agency_name = 'Chicago Public Library'
     timezone = 'America/Chicago'
     allowed_domains = ['https://www.chipublib.org/']
     start_urls = ['https://www.chipublib.org/board-of-directors/board-meeting-schedule/']
-    r = requests.get("https://data.cityofchicago.org/resource/psqp-6rmg.json")
-    LIB_INFO = json.loads(r.text)
-        
+
+    def __init__(self, *args, session=requests.Session(), **kwargs):
+        """
+        Initialize a spider with a session object to use in the
+        _get_lib_info function.
+        """
+        super().__init__(*args, **kwargs)
+        self.session = session
+
     def parse(self, response):
         """
         `parse` should always `yield` a dict that follows the `Open Civic Data
@@ -58,7 +64,7 @@ class ChiLibrarySpider(Spider):
             start_time = self._parse_start(item, yr)
             data = {
                 '_type': 'event',
-                'name': 'Chicago Public Library Board Meeting',
+                'name': 'Board of Directors',
                 'description': description_str,
                 'classification': BOARD,
                 'start': {
