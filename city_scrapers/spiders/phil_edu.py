@@ -3,10 +3,10 @@ import scrapy
 from city_scrapers.spider import Spider
 
 
-class PhilSchoolSpider(Spider):
-    name = 'phil_school'
+class PhilEduSpider(Spider):
+    name = 'phil_edu'
     agency_name = 'Philadelphia Board of Education'
-    timezone = 'US/Eastern'
+    timezone = 'America/Chicago'
     allowed_domains = ['www.philasd.org']
     start_urls = ['https://www.philasd.org/schoolboard/action-meetings/upcoming-meeting/']
 
@@ -18,15 +18,14 @@ class PhilSchoolSpider(Spider):
         Change the `_parse_id`, `_parse_name`, etc methods to fit your scraping
         needs.
         """
-        date_response = response.css('.background > div:nth-child(1) > p:nth-child(2)'))
-        for item in response.css('#post-89 > div:nth-child(1)'):
+        for item in response.css('.eventspage'):
 
             data = {
                 '_type': 'event',
                 'name': self._parse_name(item),
                 'event_description': self._parse_description(item),
                 'classification': self._parse_classification(item),
-                'start': self._parse_start(date_response),
+                'start': self._parse_start(item),
                 'end': self._parse_end(item),
                 'all_day': self._parse_all_day(item),
                 'location': self._parse_location(item),
@@ -55,7 +54,6 @@ class PhilSchoolSpider(Spider):
         """
         Parse or generate event name.
         """
-        
         return ''
 
     def _parse_description(self, item):
@@ -70,12 +68,11 @@ class PhilSchoolSpider(Spider):
         """
         return ''
 
-    def _parse_start(self, date_response):
+    def _parse_start(self, item):
         """
         Parse start date and time.
         """
-        date = re.search('(?<=Date:).*?(?=<br>)', date_response)
-        return date
+        return ''
 
     def _parse_end(self, item):
         """
@@ -95,9 +92,9 @@ class PhilSchoolSpider(Spider):
         left blank and will be geocoded later.
         """
         return {
-            'address': '440 N. Broad Street, Philadelphia, PA, 19130',
-            'name': ' Auditorium',
-            'neighborhood': 'Downtown',
+            'address': '',
+            'name': '',
+            'neighborhood': '',
         }
 
     def _parse_documents(self, item):
