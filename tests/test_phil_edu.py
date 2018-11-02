@@ -3,11 +3,16 @@ import pytest
 from tests.utils import file_response
 from city_scrapers.spiders.phil_edu import PhilEduSpider
 
-
-def test_tests():
-    print('Please write some tests for this spider or at least disable this one.')
-    assert False
-
+test_response = file_response(
+    'files/phil_edu.html',
+    url='https://www.philasd.org/schoolboard/action-meetings/meeting-schedule/',
+)
+spider = PhilEduSpider()
+parsed_items = [
+    item for item in spider.parse(test_response)
+#   if isinstance(item, dict)
+]
+print(parsed_items)
 
 """
 Uncomment below
