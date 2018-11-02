@@ -58,6 +58,7 @@ class ChiLibrarySpider(Spider):
         # remove first two informational lines from events array
         events_only = all_clean_events[2:]
         # get library info from City of Chicago API
+        lib_info = self._get_lib_info()
 
         for item in events_only:
             yr = cleanhtml(year[0])
@@ -84,6 +85,14 @@ class ChiLibrarySpider(Spider):
             data['id'] = self._generate_id(data)
             data['status'] = self._generate_status(data, '')
             yield data
+
+    def _get_lib_info(self):
+        """
+        Returns a list of dictionaries of information about each library
+        from the City of Chicago's API.
+        """
+        r = self.session.get("https://data.cityofchicago.org/resource/psqp-6rmg.json")
+        return json.loads(r.text)
 
     def _parse_classification(self, item):
         """
