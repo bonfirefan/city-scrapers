@@ -32,7 +32,7 @@ class MiBelleIsleSpider(Spider):
             date, start_time, end_time = self._parse_date_and_times(item)
             data = {
                 '_type': 'event',
-                'name': 'Committee Meeting',
+                'name': 'Belle Isle Advisory Committee',
                 'event_description': '',
                 'classification': ADVISORY_COMMITTEE,
                 'start': {
@@ -70,8 +70,12 @@ class MiBelleIsleSpider(Spider):
         time_end_str = re.findall(r'((?<=-)\s*)(\d+?:*?\d*)', time_str)[0][1]
 
         date_value = dateparse(date_str)
-        start_value = dateparse(f'{date_str} {time_start_str} {meridian_str}')
-        end_value = dateparse(f'{date_str} {time_end_str} {meridian_str}')
+        start_value = dateparse(
+            '{} {} {}'.format(date_str, time_start_str, meridian_str)
+        )
+        end_value = dateparse(
+            '{} {} {}'.format(date_str, time_end_str, meridian_str)
+        )
 
         return date_value.date(), start_value.time(), end_value.time()
 

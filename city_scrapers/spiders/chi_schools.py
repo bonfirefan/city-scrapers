@@ -7,7 +7,7 @@ from city_scrapers.spider import Spider
 
 class ChiSchoolsSpider(Spider):
     name = 'chi_schools'
-    agency_name = 'Chicago Public Schools Board of Education'
+    agency_name = 'Chicago Public Schools'
     timezone = 'America/Chicago'
     allowed_domains = ['www.cpsboe.org']
     start_urls = ['http://www.cpsboe.org/meetings/planning-calendar']
@@ -22,7 +22,7 @@ class ChiSchoolsSpider(Spider):
                 start = self._parse_start_time(item)
                 data = {
                     '_type': 'event',
-                    'name': 'Monthly Board Meeting',
+                    'name': 'Board of Education',
                     'event_description': event_description,
                     'all_day': self._parse_all_day(item),
                     'classification': BOARD,
@@ -47,7 +47,10 @@ class ChiSchoolsSpider(Spider):
 
     def _parse_start_time(self, item):
         raw_strings = item.css('::text').extract()
-        date_string = self._remove_line_breaks(raw_strings)[0]
+        date_string_list = self._remove_line_breaks(raw_strings)
+        date_string = ''
+        if len(date_string_list) > 0:
+            date_string = date_string_list[0]
         date_string = date_string.replace(' at', '')
         date_string = date_string.replace(',', "").replace(':', " ")
         try:

@@ -10,7 +10,7 @@ from city_scrapers.spider import Spider
 
 class DetEconomicDevelopmentCorporationSpider(Spider):
     name = 'det_economic_development_corporation'
-    agency_name = 'Detroit Economic Development Corporation Board of Directors'
+    agency_name = 'Detroit Economic Development Corporation'
     timezone = 'America/Detroit'
     allowed_domains = ['www.degc.org']
     start_urls = ['http://www.degc.org/public-authorities/edc/']
@@ -54,7 +54,7 @@ class DetEconomicDevelopmentCorporationSpider(Spider):
         try:
             if date_match and time_match:
                 dt = parse(
-                    f'{date_match.group(1)} {time_match.group(1)}',
+                    '{} {}'.format(date_match.group(1), time_match.group(1)),
                     fuzzy=True,
                 )
                 return {'date': dt.date(), 'time': dt.time(), 'note': ''}

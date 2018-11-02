@@ -10,9 +10,7 @@ from city_scrapers.spider import Spider
 
 class NextMichiganDevelopmentCorporationSpider(Spider):
     name = 'next_michigan_development_corporation'
-    agency_name = (
-        'Detroit Next Michigan Development Corporation Board of Directors'
-    )
+    agency_name = 'Detroit Next Michigan Development Corporation'
     timezone = 'America/Chicago'
     allowed_domains = ['www.degc.org']
     start_urls = ['http://www.degc.org/public-authorities/d-nmdc/']
@@ -80,7 +78,7 @@ class NextMichiganDevelopmentCorporationSpider(Spider):
         try:
             if date_match and time_match:
                 dt = parse(
-                    f'{date_match.group(1)} {time_match.group(1)}',
+                    '{} {}'.format(date_match.group(1), time_match.group(1)),
                     fuzzy=True,
                 )
                 return {'date': dt.date(), 'time': dt.time(), 'note': ''}

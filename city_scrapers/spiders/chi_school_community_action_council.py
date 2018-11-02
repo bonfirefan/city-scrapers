@@ -8,7 +8,7 @@ from city_scrapers.spider import Spider
 
 class ChiSchoolCommunityActionCouncilSpider(Spider):
     name = 'chi_school_community_action_council'
-    agency_name = 'Chicago Public Schools Community Action Councils'
+    agency_name = 'Chicago Public Schools'
     timezone = 'America/Chicago'
     allowed_domains = ['cps.edu']
     start_urls = ['http://cps.edu/FACE/Pages/CAC.aspx']
@@ -75,7 +75,7 @@ class ChiSchoolCommunityActionCouncilSpider(Spider):
         CAC_NAME = 'Community Action Council'
         community_area = self._parse_community_area(item)
         if community_area:
-            return f'{community_area} {CAC_NAME}'
+            return '{} {}'.format(community_area, CAC_NAME)
         return CAC_NAME
 
     @staticmethod
@@ -181,11 +181,12 @@ class ChiSchoolCommunityActionCouncilSpider(Spider):
         left blank and will be geocoded later.
         """
         source = item.css('li::text').extract()[1]
+        address = source[source.find("(") + 1:source.find(")")]
         return {
             'name': source[
                 source.find('at') + 2:source.find('(')
             ].replace('the', '').strip(),
-            'address': source[source.find("(")+1:source.find(")")],
+            'address': '{} Chicago, IL'.format(address),
             'neighborhood': self._parse_community_area(item)
         }
 
